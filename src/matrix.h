@@ -12,6 +12,7 @@ class Matrix {
     std::vector<std::vector<double>> data;
     int rows, cols;
 
+    Matrix() {}
     Matrix(int r, int c) : rows(r), cols(c), data(r, std::vector<double>(c, 0)) {}
     Matrix(std::vector<std::vector<double>> d) : rows(d.size()), cols(d[0].size()), data(d) {}
 
@@ -66,6 +67,29 @@ class Matrix {
             }
         }
         return transposed;
+    }
+
+    Matrix flip() const {
+        Matrix flipped(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                flipped.data[i][j] = data[rows - i - 1][cols - j - 1];
+            }
+        }
+        return flipped;
+    }
+
+    Matrix slice(int row_start, int row_end, int col_start, int col_end) const {
+        int new_rows = row_end - row_start;
+        int new_cols = col_end - col_start;
+        Matrix sliced(new_rows, new_cols);
+
+        for (int i = 0; i < new_rows; i++) {
+            for (int j = 0; j < new_cols; j++) {
+                sliced.data[i][j] = this -> data[row_start + i][col_start + j];
+            }
+        }
+        return sliced;
     }
 
     Matrix operator+(const Matrix& other) const {
