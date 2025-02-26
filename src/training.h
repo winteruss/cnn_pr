@@ -1,22 +1,22 @@
-#ifndef TRAINING_H
-#define TRAINING_H
+#ifndef TRAIN_H
+#define TRAIN_H
 
-#include "matrix.h"
-#include "fc.h"
-#include "activation.h"
-#include "loss.h"
+#include "model.h"
 
-/*inline double train(FCLayer& fc, const Matrix& input, const Matrix& target) {
+void train(Model& model, const std::vector<std::pair<Matrix, Matrix>>& dataset, int epochs) {
+    for (int epoch = 0; epoch < epochs; epoch++) {
+        std::cout << "Epoch " << epoch + 1 << std::endl;
 
-    Matrix logits = fc.forward(input);
-    Matrix probabilities = Softmax(logits);
+        for (int i = 0; i < dataset.size(); i++) {
+            const auto& [input, target] = dataset[i];
 
-    double loss = CrossEntropyLoss(probabilities, target);
+            auto [output, loss] = model.forward(input, target);
+            Matrix loss_grad = Softmax(output) - target;  // Derivative of Cross Entropy Loss
+            model.backward(loss_grad);
 
-    Matrix d_output = probabilities - target;
-    fc.backward(input, d_output);
-
-    return loss;
-}*/
+            std::cout << "  Sample " << i + 1 << " - Loss: " << loss << std::endl;
+        }
+    }
+}
 
 #endif

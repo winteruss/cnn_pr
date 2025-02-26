@@ -13,8 +13,19 @@ class Matrix {
     int rows, cols;
 
     Matrix() {}
+    
     Matrix(int r, int c) : rows(r), cols(c), data(r, std::vector<double>(c, 0)) {}
+    
     Matrix(std::vector<std::vector<double>> d) : rows(d.size()), cols(d[0].size()), data(d) {}
+
+    Matrix(int r, int c, std::vector<double>& values) : rows(r), cols(c), data(r, std::vector<double>(c, 0)) {
+        if (values.size() != r * c) throw std::invalid_argument("Invalid number of values");
+        for (int i = 0; i < r; i++){
+            for (int j = 0; j < c; j++){
+                data[i][j] = values[i * c + j];
+            }
+        }
+    }
 
     void randomize(double min_val = -0.5, double max_val = 0.5) {
         for (int i = 0; i < rows; i++) {
