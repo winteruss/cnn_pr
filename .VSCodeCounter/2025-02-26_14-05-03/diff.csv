@@ -1,0 +1,13 @@
+"filename", "language", "C++", "comment", "blank", "total"
+"c:\Users\saeol\Desktop\C Projects\CNN\src\FC_layer.h", "C++", -21, 0, -6, -27
+"c:\Users\saeol\Desktop\C Projects\CNN\src\conv.h", "C++", 28, 0, 6, 34
+"c:\Users\saeol\Desktop\C Projects\CNN\src\conv_layer.h", "C++", -28, 0, -6, -34
+"c:\Users\saeol\Desktop\C Projects\CNN\src\fc.h", "C++", 23, 0, 8, 31
+"c:\Users\saeol\Desktop\C Projects\CNN\src\loadCSV.h", "C++", 37, 4, 10, 51
+"c:\Users\saeol\Desktop\C Projects\CNN\src\main.cpp", "C++", 7, 18, 2, 27
+"c:\Users\saeol\Desktop\C Projects\CNN\src\matrix.h", "C++", 80, 0, 11, 91
+"c:\Users\saeol\Desktop\C Projects\CNN\src\model.h", "C++", 37, 0, 10, 47
+"c:\Users\saeol\Desktop\C Projects\CNN\src\pool.h", "C++", 28, 0, 6, 34
+"c:\Users\saeol\Desktop\C Projects\CNN\src\pooling_layer.h", "C++", -28, 0, -6, -34
+"c:\Users\saeol\Desktop\C Projects\CNN\src\training.h", "C++", 7, 12, 4, 23
+"Total", "-", 170, 34, 39, 243

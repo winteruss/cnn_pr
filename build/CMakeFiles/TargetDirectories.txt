@@ -1,0 +1,3 @@
+C:/Users/saeol/Desktop/C Projects/CNN/build/CMakeFiles/CNN.dir
+C:/Users/saeol/Desktop/C Projects/CNN/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/saeol/Desktop/C Projects/CNN/build/CMakeFiles/ZERO_CHECK.dir

@@ -1,0 +1,13 @@
+"filename", "language", "C++", "comment", "blank", "total"
+"c:\Users\saeol\Desktop\C Projects\CNN\src\activation.h", "C++", 30, 0, 9, 39
+"c:\Users\saeol\Desktop\C Projects\CNN\src\conv.h", "C++", 28, 0, 6, 34
+"c:\Users\saeol\Desktop\C Projects\CNN\src\fc.h", "C++", 23, 0, 8, 31
+"c:\Users\saeol\Desktop\C Projects\CNN\src\loadCSV.h", "C++", 37, 4, 10, 51
+"c:\Users\saeol\Desktop\C Projects\CNN\src\loss.h", "C++", 11, 0, 3, 14
+"c:\Users\saeol\Desktop\C Projects\CNN\src\main.cpp", "C++", 42, 18, 10, 70
+"c:\Users\saeol\Desktop\C Projects\CNN\src\matrix.h", "C++", 144, 0, 22, 166
+"c:\Users\saeol\Desktop\C Projects\CNN\src\model.h", "C++", 37, 0, 10, 47
+"c:\Users\saeol\Desktop\C Projects\CNN\src\pool.h", "C++", 28, 0, 6, 34
+"c:\Users\saeol\Desktop\C Projects\CNN\src\training.h", "C++", 7, 12, 4, 23
+"c:\Users\saeol\Desktop\C Projects\CNN\src\util.h", "C++", 6, 0, 2, 8
+"Total", "-", 393, 34, 90, 517
