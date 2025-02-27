@@ -18,7 +18,8 @@ class FCLayer {
 
     Matrix forward(const Matrix& input) {
         last_input = input;
-        return weights * input + bias;
+        Matrix result = weights * input + bias;
+        return result;
     }
 
     Matrix backward(const Matrix& d_output) {

@@ -28,7 +28,7 @@ int main() {
             auto [output, loss] = model.forward(input, target);
             total_loss += loss;
 
-            Matrix loss_grad = Softmax(output) - target;
+            Matrix loss_grad = softmax(output) - target;
             model.backward(loss_grad);
         }
         std::cout << "Epoch " << epoch + 1 << " Loss: " << total_loss / images.size() << std::endl;

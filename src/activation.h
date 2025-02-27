@@ -5,34 +5,42 @@
 
 #include "util.h"
 
-inline Matrix ReLU(const Matrix& input) {
+inline Matrix leakyReLU(const Matrix& input, double alpha = 0.01) {
     Matrix output = input;
 
-    for (auto& row : output.data) {
-        for (double& val : row) {
-            val = max(val, 0.0);
+    for (int i = 0; i < input.rows; i++) {
+        for (int j = 0; j < input.cols; j++) {
+            output.data[i][j] = (input.data[i][j] > 0) ? input.data[i][j] : alpha * input.data[i][j];
         }
     }
     return output;
 }
 
-inline Matrix Softmax(const Matrix& input) {
+inline Matrix leakyReLU_backward(const Matrix& grad, const Matrix& input, double alpha = 0.01) {
+    Matrix output = grad;
+
+    for (int i = 0; i < grad.rows; i++) {
+        for (int j = 0; j < grad.cols; j++) {
+            output.data[i][j] *= (input.data[i][j] > 0) ? 1.0 : alpha;
+        }
+    }
+    return output;
+}
+
+inline Matrix softmax(const Matrix& input) {
     Matrix output = input;
-    double sum_exp = 0.0;
+    for (int i = 0; i < input.rows; i++) {
+        double sum_exp = 0.0;
 
-    for (auto& row : output.data) {
-        for (double& val : row) {
-            val = exp(val);
-            sum_exp += val;
+        for (int j = 0; j < input.cols; j++) {
+            output.data[i][j] = exp(input.data[i][j]);
+            sum_exp += output.data[i][j];
+        }
+
+        for (int j = 0; j < input.cols; j++) {
+            output.data[i][j] /= sum_exp;
         }
     }
-
-    for (auto& row : output.data) {
-        for (double& val : row) {
-            val /= sum_exp;
-        }
-    }
-
     return output;
 }
 

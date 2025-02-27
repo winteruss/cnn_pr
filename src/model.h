@@ -19,12 +19,16 @@ class Model {
     int output_size;
     double learning_rate;
 
+    std::vector<Matrix> pre_activation;    // Store pre-activation values for backpropagation
+
     Model(int input_size, int output_size, double lr, int num_conv_layers)
-    : fc(input_size, output_size, lr), input_size(input_size), output_size(output_size), learning_rate(lr) {
+    // Adjust input size of FC layer regarding pooling layers, assuming 2x2 and stride 2
+    : fc(input_size / (1 << num_conv_layers), output_size, lr), input_size(input_size), output_size(output_size), learning_rate(lr) {  
         for (int i = 0; i < num_conv_layers; i++) {
             conv_layers.emplace_back();
             pool_layers.emplace_back();
         }
+        pre_activation.resize(num_conv_layers);
     }
 
     std::pair<Matrix, double> forward(const Matrix& input, const Matrix& target) {
@@ -32,13 +36,15 @@ class Model {
         
         for (int i = 0; i < conv_layers.size(); i++) {
             x = conv_layers[i].forward(x);
-            x = ReLU(x);
+            pre_activation[i] = x;
+            x = leakyReLU(x);
             x = pool_layers[i].forward(x);
         }
 
         x = x.flatten();
         x = fc.forward(x);
-        double loss = CrossEntropyLoss(Softmax(x), target);
+        
+        double loss = crossEntropyLoss(softmax(x), target);
         return {x, loss};
     }
 
@@ -47,7 +53,7 @@ class Model {
 
         for (int i = conv_layers.size() - 1; i >= 0; i--) {
             grad = pool_layers[i].backward(grad);
-            grad = ReLU(grad);
+            grad = leakyReLU_backward(grad, pre_activation[i]);
             grad = conv_layers[i].backward(grad);
         }
     }

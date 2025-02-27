@@ -12,6 +12,10 @@ class DataLoader {
   public:
     static void loadCSV(const std::string& filename, std::vector<Matrix>& images, std::vector<Matrix>& labels) {
         std::ifstream file(filename);
+        if (!file.is_open()) {
+            std::cerr << "Unable to open: " << filename << std::endl;
+            return;
+        }
         std::string line;
 
         while (std::getline(file, line)) {
@@ -23,7 +27,7 @@ class DataLoader {
             int idx = 0;
             int label_value;
 
-            while (std::getline(ss, value, '\t')) {
+            while (std::getline(ss, value, ',')) {
                 if (idx == 0) {
                     label_value = std::stoi(value);
                     label_data[label_value] = 1.0;
