@@ -15,24 +15,28 @@ inline Matrix leakyReLU(const Matrix& input, double alpha = 0.01) {
     }
     return output;
 }
-/*
-inline Matrix leakyReLU_backward(const Matrix& grad, const Matrix& input, double alpha = 0.01) {
-    Matrix output = grad;
 
-    for (int i = 0; i < grad.rows; i++) {
-        for (int j = 0; j < grad.cols; j++) {
-            output.data[i][j] *= (input.data[i][j] > 0) ? 1.0 : alpha;
+inline Matrix leakyReLU_backward(const Matrix& input, const Matrix& grad_output, double alpha = 0.01) {
+    Matrix grad_input = grad_output;
+
+    for (int i = 0; i < input.rows; i++) {
+        for (int j = 0; j < input.cols; j++) {
+            grad_input.data[i][j] *= (input.data[i][j] > 0) ? 1.0 : alpha;
         }
     }
-    return output;
+    return grad_input;
 }
-*/
+
 inline Matrix softMax(const Matrix& input) {    // Assume input is a column vector
     Matrix output = input;
+    double max_val = input.data[0][0];
+    for (int i = 1; i < input.rows; i++) {
+        max_val = max(max_val, input.data[i][0]);
+    }
+
     double sum_exp = 0.0;
-    
     for (int i = 0; i < input.rows; i++) {
-        output.data[i][0] = exp(input.data[i][0]);
+        output.data[i][0] = exp(input.data[i][0] - max_val);    // Prevent overflow by dividing by e^(max_val)
         sum_exp += output.data[i][0];
     }
 

@@ -17,6 +17,20 @@ void train(Model& model, const std::vector<std::pair<Matrix, Matrix>>& dataset, 
             std::cout << "  Sample " << i + 1 << " - Loss: " << loss << std::endl;
         }
     }
+}*/
+
+void train(Model& model, const Matrix& input, const Matrix& target, int epochs) {
+    Matrix normalized_input = input.normalize();
+    for (int epoch = 0; epoch < epochs; epoch++) {
+        std::cout << "Epoch " << epoch + 1 << std::endl;
+
+        auto [logits, loss] = model.forward(normalized_input, target);
+        model.backward(logits, target);
+        model.update();
+
+        std::cout << "  Loss: " << loss << std::endl;
+    }
+
 }
-*/
+
 #endif

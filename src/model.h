@@ -19,7 +19,7 @@ class Model {
     int output_size;
     double learning_rate;
 
-    // std::vector<Matrix> pre_activation;    // Store pre-activation values for backpropagation
+    std::vector<Matrix> intermediates;   // Save for backpropagation
 
     Model(int input_rows, int input_cols, int output_size, double lr, int num_conv_layers)
     // Adjust input size of FC layer regarding pooling layers, assuming 2x2 and stride 2
@@ -32,37 +32,73 @@ class Model {
             rows = (rows - 2) / 2 + 1;
             cols = (cols - 2) / 2 + 1;
         }
-        fc = FCLayer(rows * cols, output_size, lr);
-        // pre_activation.resize(num_conv_layers);
+        intermediates.resize(2 * num_conv_layers + 1);  // Conv, ReLu Outputs + FC Input
     }
 
     std::pair<Matrix, double> forward(const Matrix& input, const Matrix& target) {
         Matrix x = input;
-        
+        int idx = 0;
         for (int i = 0; i < conv_layers.size(); i++) {
             x = conv_layers[i].forward(x);
-            // pre_activation[i] = x;
+            intermediates[idx++] = x;
             x = leakyReLU(x);
+            intermediates[idx++] = x;
             x = pool_layers[i].forward(x);
         }
-
+        intermediates[idx] = x;
         x = x.flatten();
         x = fc.forward(x);
         
         double loss = crossEntropyLoss(softMax(x), target);
         return {x, loss};
     }
-/*
-    void backward(const Matrix& loss_grad) {
-        Matrix grad = fc.backward(loss_grad);
 
+    void backward(const Matrix& logits, const Matrix& target) {
+        Matrix probs = softMax(logits);
+        Matrix grad = probs - target;
+
+        grad = fc.backward(grad);
+        grad = pool_layers.back().backward(grad);
+        grad = leakyReLU_backward(intermediates[intermediates.size() - 2], grad);   // LeakReLU input
         for (int i = conv_layers.size() - 1; i >= 0; i--) {
-            grad = pool_layers[i].backward(grad);
-            grad = leakyReLU_backward(grad, pre_activation[i]);
             grad = conv_layers[i].backward(grad);
+            if (i > 0) {
+                grad = pool_layers[i - 1].backward(grad);
+                grad = leakyReLU_backward(intermediates[2 * i - 1], grad);
+            }
         }
     }
-*/
+
+    void update() {
+        for (auto& conv : conv_layers) conv.update(learning_rate);
+        fc.update(learning_rate);
+    }
+
+    void save(const std::string& filename) const {
+        std::ofstream ofs(filename);
+        if (!ofs) throw std::runtime_error("Cannot open file for saving.");
+        for (const auto& conv : conv_layers) {
+            ofs << "Conv Kernel:\n";
+            for (int i = 0; i < conv.kernel.rows; i++) {
+                for (int j = 0; j < conv.kernel.cols; j++) {
+                    ofs << conv.kernel.data[i][j] << " ";
+                }
+                ofs << "\n";
+            }
+            ofs << "Conv Bias:\n" << conv.bias << "\n";
+        }
+        ofs << "FC Weights:\n";
+        for (int i = 0; i < fc.weights.rows; i++) {
+            for (int j = 0; j < fc.weights.cols; j++) {
+                ofs << fc.weights.data[i][j] << " ";
+            }
+            ofs << "\n";
+        }
+        ofs << "FC Bias:\n";
+        for (int i = 0; i < fc.bias.rows; i++) {
+            ofs << fc.bias.data[i][0] << " ";
+        }
+    }
 
   private:
     static int calculate_fc_input_size(int rows, int cols, int num_conv_layers) {

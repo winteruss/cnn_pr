@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <ctime>
 
+#include "util.h"
 
 class Matrix {
   public:
@@ -71,7 +72,7 @@ class Matrix {
         return flat;
     }
 
-    Matrix T() const {
+    Matrix transpose() const {
         Matrix transposed(cols, rows);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -90,20 +91,28 @@ class Matrix {
         }
         return flipped;
     }
-/*
-    Matrix slice(int row_start, int row_end, int col_start, int col_end) const {
-        int new_rows = row_end - row_start;
-        int new_cols = col_end - col_start;
-        Matrix sliced(new_rows, new_cols);
 
-        for (int i = 0; i < new_rows; i++) {
-            for (int j = 0; j < new_cols; j++) {
-                sliced.data[i][j] = this -> data[row_start + i][col_start + j];
+    Matrix normalize() const {    // Min-Max Normalization
+        Matrix normalized(rows, cols);
+        double max_val = data[0][0];
+        double min_val = data[0][0];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                max_val = max(max_val, data[i][j]);
+                min_val = min(min_val, data[i][j]);
             }
         }
-        return sliced;
+
+        double range = max_val - min_val;
+        if (range == 0.0) range = 1.0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                normalized.data[i][j] = (data[i][j] - min_val) / range;
+            }
+        }
+        return normalized;
     }
-*/
+
     Matrix operator+(const Matrix& other) const {
         if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
         Matrix result(rows, cols);
