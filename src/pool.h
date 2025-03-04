@@ -7,20 +7,20 @@ class PoolLayer {
   private:
     int pool_r, pool_c;
     int stride_r, stride_c;
-    Matrix last_input;
-    Matrix max_mask;
+    // Matrix last_input;
+    // Matrix max_mask;
 
   public:
-    PoolLayer(int pr = 2, int pc = 2, int sr = 2, int sc = 2)
+    PoolLayer(int pr = 2, int pc = 2, int sr = 2, int sc = 2)   // Default: 2x2 pooling with stride 2
     : pool_r(pr), pool_c(pc), stride_r(sr), stride_c(sc) {}
 
     Matrix forward(const Matrix& input) {
-        last_input = input;
+        // last_input = input;
         int output_rows = (input.rows - pool_r) / stride_r + 1;
         int output_cols = (input.cols - pool_c) / stride_c + 1;
         Matrix pooled(output_rows, output_cols);
 
-        max_mask = Matrix(input.rows, input.cols);
+        // max_mask = Matrix(input.rows, input.cols);
         for (int i = 0; i < output_rows; i++) {
             for (int j = 0; j < output_cols; j++) {
                 double max_val = -1e9;
@@ -37,12 +37,12 @@ class PoolLayer {
                     }
                 }
                 pooled.data[i][j] = max_val;
-                max_mask.data[max_row][max_col] = 1;
+                // max_mask.data[max_row][max_col] = 1;
             }
         }
         return pooled;
     }
-
+/*
     Matrix backward(const Matrix& d_output) {
         Matrix d_input(last_input.rows, last_input.cols);
         int output_rows = d_output.rows;
@@ -61,6 +61,7 @@ class PoolLayer {
         }
         return d_input;
     }
+*/
 };
 
 #endif

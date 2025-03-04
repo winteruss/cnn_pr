@@ -45,14 +45,15 @@ class Matrix {
         }
     }
 
-    Matrix pad(int top, int left, int bottom, int right) const {
-        int output_rows = rows + top + bottom;
-        int output_cols = cols + left + right;
+    Matrix pad(int pads) const {
+        int output_rows = rows + 2 * pads;
+        int output_cols = cols + 2 * pads;
+
         Matrix padded(output_rows, output_cols);
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                padded.data[i+top][j+left] = data[i][j];
+                padded.data[i+pads][j+pads] = data[i][j];
             }
         }
         return padded;
@@ -89,7 +90,7 @@ class Matrix {
         }
         return flipped;
     }
-
+/*
     Matrix slice(int row_start, int row_end, int col_start, int col_end) const {
         int new_rows = row_end - row_start;
         int new_cols = col_end - col_start;
@@ -102,7 +103,7 @@ class Matrix {
         }
         return sliced;
     }
-
+*/
     Matrix operator+(const Matrix& other) const {
         if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
         Matrix result(rows, cols);

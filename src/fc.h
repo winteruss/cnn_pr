@@ -2,9 +2,6 @@
 #define FC_H
 
 class FCLayer { 
-  private:
-    Matrix last_input;
-
   public:
     Matrix weights;
     Matrix bias;
@@ -16,12 +13,12 @@ class FCLayer {
         bias.randomize();
     }
 
-    Matrix forward(const Matrix& input) {
-        last_input = input;
+    Matrix forward(const Matrix& input) {    // Assume input is already flattened(column vector)
+        //last_input = input;
         Matrix result = weights * input + bias;
         return result;
     }
-
+/*
     Matrix backward(const Matrix& d_output) {
         Matrix d_weights = d_output * last_input.T();
         Matrix d_bias = d_output;
@@ -31,6 +28,7 @@ class FCLayer {
 
         return weights.T() * d_output;
     }
+*/
 };
 
 #endif

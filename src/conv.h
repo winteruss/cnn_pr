@@ -2,33 +2,21 @@
 #define CONV_H
 
 class ConvLayer {
-  private:
-    Matrix last_input;
-    int pad_top, pad_left, pad_bottom, pad_right;
-
   public:
     Matrix kernel;
+    double bias;
+    Matrix input;   // Save for backpropagation
 
     ConvLayer() : kernel(3, 3) {
         kernel.randomize();
-        calculate_padding();
+        bias = rand() / (double)RAND_MAX;
     }
 
-    ConvLayer(const Matrix& k) : kernel(k) {
-        calculate_padding();
-    }
-
-    void calculate_padding() {
-        pad_top = (kernel.rows - 1) / 2;
-        pad_left = (kernel.cols - 1) / 2;
-        pad_bottom = pad_top + (kernel.rows % 2 == 0 ? 1 : 0);
-        pad_right = pad_left + (kernel.cols % 2 == 0 ? 1 : 0);
-    }
+    ConvLayer(const Matrix& k) : kernel(k) {}
 
     Matrix forward(const Matrix& input) {
-        last_input = input;
-
-        Matrix padded_input = input.pad(pad_top, pad_left, pad_bottom, pad_right);
+        this -> input = input;
+        Matrix padded_input = input.pad(kernel.cols / 2);   // Suppose that kernel is square
         Matrix output(input.rows, input.cols);
 
         for (int i = 0; i < output.rows; i++) {
@@ -39,14 +27,15 @@ class ConvLayer {
                         sum += padded_input.data[i+ki][j+kj] * kernel.data[ki][kj];
                     }
                 }
-                output.data[i][j] = sum;
+                output.data[i][j] = sum + bias;
             }
         }
         return output;
     }
-
-    Matrix backward(const Matrix& d_out) {
-        Matrix d_kernel(kernel.rows, kernel.cols);
+/*
+    Matrix backward(const Matrix& grad_out) {
+        Matrix padded_input = input.pad(kernel.cols / 2);
+        Matrix d_kernel(input.rows, input.cols);
         for (int i = 0; i < d_kernel.rows; i++) {
             for (int j = 0; j < d_kernel.cols; j++) {
                 double sum = 0.0;
@@ -73,6 +62,7 @@ class ConvLayer {
         }
         return d_input.slice(pad_top, pad_top + last_input.rows, pad_left, pad_left + last_input.cols);
     }
-};
 
+};
+*/
 #endif
