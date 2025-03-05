@@ -8,17 +8,24 @@
 int main() {
     Dataset dataset;
     dataset.loadCSV("C:\\Users\\saeol\\Desktop\\C Projects\\CNN\\data\\mnist_train.csv", 28, 28, 10);
-    Model model(28, 28, 10, 0.001, 2);
 
-    model.conv_layers[0].kernel = Matrix(3, 3, 1);
-    model.conv_layers[0].bias = 0.0;
-    model.conv_layers[1].kernel = Matrix(3, 3, 0.9);
-    model.conv_layers[1].bias = 0.0;
+    int num_conv_layers = 3;
+    int fc_input_size = Model::calculate_fc_input_size(28, 28, num_conv_layers);
+    int epochs = 50;
 
-    model.fc.weights = Matrix(10, 49, 0.1);
-    model.fc.bias = Matrix(10, 1, 0.0);
+    Model model(28, 28, 10, 0.001, num_conv_layers);
 
-    trainDataset(model, dataset, 50);
+    for (int i = 0; i < num_conv_layers; i++) {
+        model.conv_layers[i].kernel = Matrix(3, 3);
+        model.conv_layers[i].kernel.randomize(-0.1, 0.1);
+        model.conv_layers[i].bias = 0.0;
+    }
+
+    model.fc.weights = Matrix(10, fc_input_size);
+    model.fc.weights.randomize(-0.1, 0.1);
+    model.fc.bias = Matrix(10, 1);
+
+    trainDataset(model, dataset, epochs);
     model.save("trained_model.txt");
 
     std::cout << "\nFinal Predictions:\n";

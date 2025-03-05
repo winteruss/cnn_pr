@@ -100,6 +100,17 @@ class Model {
             ofs << fc.bias.data[i][0] << " ";
         }
     }
+
+    static int calculate_fc_input_size(int rows, int cols, int num_conv_layers) {
+        int reduced_rows = rows;
+        int reduced_cols = cols;
+        for (int i = 0; i < num_conv_layers; i++) {
+            reduced_rows = reduced_rows / 2;
+            reduced_cols = reduced_cols / 2;
+        }
+        return reduced_rows * reduced_cols;
+    }
+    
     /* To be implemented...
     void load(const std::string& filename) const {
         std::ifstream ifs(filename);
@@ -110,17 +121,6 @@ class Model {
 
         }
     } */
-
-  private:
-    static int calculate_fc_input_size(int rows, int cols, int num_conv_layers) {
-        int reduced_rows = rows;
-        int reduced_cols = cols;
-        for (int i = 0; i < num_conv_layers; i++) {
-            reduced_rows = reduced_rows / 2;
-            reduced_cols = reduced_cols / 2;
-        }
-        return reduced_rows * reduced_cols;
-    }
 };
 
 #endif

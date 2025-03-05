@@ -1,6 +1,6 @@
 # Todo
 - [x] Backward Propagation for single image
-- [ ] Dataset Class
-- [ ] loadCSV()
+- [x] Dataset Class
+- [x] loadCSV()
 - [ ] model.load()
-- [ ] train() for multiple images
+- [x] train() for multiple images
