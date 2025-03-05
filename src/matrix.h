@@ -5,8 +5,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
-
-#include "util.h"
+#include <algorithm>
 
 class Matrix {
   public:
@@ -18,6 +17,8 @@ class Matrix {
     Matrix(int r, int c) : rows(r), cols(c), data(r, std::vector<double>(c, 0)) {}
     
     Matrix(std::vector<std::vector<double>> d) : rows(d.size()), cols(d[0].size()), data(d) {}
+
+    Matrix(int r, int c, double val) : rows(r), cols(c), data(r, std::vector<double>(c, val)) {}
 
     Matrix(int r, int c, std::vector<double>& values) : rows(r), cols(c), data(r, std::vector<double>(c, 0)) {
         if (values.size() != r * c) throw std::invalid_argument("Invalid number of values");
@@ -98,8 +99,8 @@ class Matrix {
         double min_val = data[0][0];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                max_val = max(max_val, data[i][j]);
-                min_val = min(min_val, data[i][j]);
+                max_val = std::max(max_val, data[i][j]);
+                min_val = std::min(min_val, data[i][j]);
             }
         }
 

@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "util.h"
+#include "matrix.h"
 
 inline Matrix leakyReLU(const Matrix& input, double alpha = 0.01) {
     Matrix output = input;
@@ -31,7 +31,7 @@ inline Matrix softMax(const Matrix& input) {    // Assume input is a column vect
     Matrix output = input;
     double max_val = input.data[0][0];
     for (int i = 1; i < input.rows; i++) {
-        max_val = max(max_val, input.data[i][0]);
+        max_val = std::max(max_val, input.data[i][0]);
     }
 
     double sum_exp = 0.0;

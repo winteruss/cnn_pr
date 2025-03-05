@@ -57,7 +57,7 @@ class ConvLayer {
                 for (int ki = 0; ki < kernel.rows; ki++) {
                     for (int kj = 0; kj < kernel.cols; kj++) {
                         int oi = i - ki + kernel.rows / 2;
-                        int oj = i - kj + kernel.cols / 2;
+                        int oj = j - kj + kernel.cols / 2;
                         if (oi >= 0 && oi < grad_out.rows && oj >= 0 && oj < grad_out.cols) {
                             sum += grad_out.data[oi][oj] * kernel.data[ki][kj];
                         }

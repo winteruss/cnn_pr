@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+#include "matrix.h"
+
 inline double crossEntropyLoss(const Matrix& y_pred, const Matrix& y_true) {
     double loss = 0.0;
     for (int i = 0; i < y_pred.rows; i++) {

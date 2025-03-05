@@ -1,68 +1,58 @@
 #include <iostream>
 
 #include "util.h"
-#include "loadCSV.h"
-#include "matrix.h"
-#include "conv.h"
-#include "pool.h"
-#include "fc.h"
-#include "activation.h"
-#include "loss.h"
 #include "training.h"
 #include "model.h"
-/*
+#include "dataset.h"
+
 int main() {
-    std::vector<Matrix> images, labels;
-    DataLoader::loadCSV("C:\\Users\\saeol\\Desktop\\C Projects\\CNN\\data\\mnist_train.csv", images, labels);
-    Model model(784, 10, 0.01, 2);
-    int epochs = 10;
-    int batch_size = 5;
+    Dataset dataset;
+    dataset.loadCSV("C:\\Users\\saeol\\Desktop\\C Projects\\CNN\\data\\mnist_train.csv", 28, 28, 10);
+    Model model(28, 28, 10, 0.001, 2);
 
-    for (int epoch = 0; epoch < epochs; epoch++) {
-        double total_loss = 0.0;
+    model.conv_layers[0].kernel = Matrix(3, 3, 1);
+    model.conv_layers[0].bias = 0.0;
+    model.conv_layers[1].kernel = Matrix(3, 3, 0.9);
+    model.conv_layers[1].bias = 0.0;
 
-        for (size_t i = 0; i < images.size(); i++) {
-            Matrix input = images[i].flatten();
-            Matrix target = labels[i];
+    model.fc.weights = Matrix(10, 49, 0.1);
+    model.fc.bias = Matrix(10, 1, 0.0);
 
-            auto [output, loss] = model.forward(input, target);
-            total_loss += loss;
+    trainDataset(model, dataset, 50);
+    model.save("trained_model.txt");
 
-            Matrix loss_grad = softmax(output) - target;
-            model.backward(loss_grad);
-        }
-        std::cout << "Epoch " << epoch + 1 << " Loss: " << total_loss / images.size() << std::endl;
+    std::cout << "\nFinal Predictions:\n";
+    for (size_t i = 0; i < dataset.size(); i++) {
+        const auto& [input, target] = dataset[i];
+        Matrix norm_input = input.normalize();
+        auto [logits, loss] = model.forward(norm_input, target);
+        Matrix probs = softMax(logits);
+        std::cout << "Image " << i + 1 << " Loss: " << loss << "\nPredictions:\n";
+        probs.print();
     }
 
-    return 0;
-}
-*/
+    std::cout << "\nGuesses:\n";
+    for (size_t i = 0; i < dataset.size(); i++) {
+        const auto& [input, target] = dataset[i];
+        Matrix norm_input = input.normalize();
+        auto [logits, loss] = model.forward(norm_input, target);
+        Matrix probs = softMax(logits);
+        int guess = argmax(probs);
+        int label = argmax(target);
+        std::cout << "Image " << i + 1 << " | Guess: " << guess << " Label: " << label << "\n";
+    }
 
-int main() {
-    Matrix input = {{
-        { 1,  2,  3,  4,  5},
-        { 6,  7,  8,  9, 10},
-        {11, 12, 13, 14, 15},
-        {16, 17, 18, 19, 20},
-        {21, 22, 23, 24, 25}
-    }};
-
-    Matrix target = {{
-        {0},
-        {1},
-        {0}
-    }};
-
-    Model model(5, 5, 3, 0.01, 2);
-    model.conv_layers[0].kernel = Matrix({{1, 1, 1}, {1, 1, 1}, {1, 1, 1}});
-    model.conv_layers[0].bias = 0.0;
-    model.conv_layers[1].kernel = Matrix({{1, 1, 1}, {1, 1, 1}, {1, 1, 1}});
-    model.conv_layers[1].bias = 0.0;
-    model.fc.weights = Matrix({{0.1}, {0.5}, {0.9}});
-    model.fc.bias = Matrix({{0.1}, {0.2}, {0.3}});
-
-    train(model, input, target, 5);
-    model.save("trained_model.txt");
+    int correct = 0;
+    for (size_t i = 0; i < dataset.size(); i++) {
+        const auto& [input, target] = dataset[i];
+        Matrix norm_input = input.normalize();
+        auto [logits, loss] = model.forward(norm_input, target);
+        Matrix probs = softMax(logits);
+        int guess = argmax(probs);
+        int label = argmax(target);
+        if (guess == label) correct++;
+    }
+    std::cout << "\nAccuracy: " << correct << "/" << dataset.size() << " (" << (static_cast<double>(correct) / dataset.size()) * 100 << "%)\n";
 
     return 0;
 }

@@ -1,7 +1,7 @@
 #ifndef POOL_H
 #define POOL_H
 
-#include "util.h"
+#include "matrix.h"
 
 class PoolLayer {
   private:
@@ -32,7 +32,7 @@ class PoolLayer {
                         if (input.data[row][col] > max_val) {
                             max_row = row;
                             max_col = col;
-                            max_val = max(max_val, input.data[row][col]);
+                            max_val = std::max(max_val, input.data[row][col]);
                         }
                     }
                 }

@@ -2,6 +2,7 @@
 #define MODEL_H
 
 #include <vector>
+#include <fstream>
 
 #include "conv.h"
 #include "pool.h"
@@ -59,7 +60,7 @@ class Model {
 
         grad = fc.backward(grad);
         grad = pool_layers.back().backward(grad);
-        grad = leakyReLU_backward(intermediates[intermediates.size() - 2], grad);   // LeakReLU input
+        grad = leakyReLU_backward(intermediates[intermediates.size() - 2], grad);   // LeakyReLU input
         for (int i = conv_layers.size() - 1; i >= 0; i--) {
             grad = conv_layers[i].backward(grad);
             if (i > 0) {
@@ -99,14 +100,24 @@ class Model {
             ofs << fc.bias.data[i][0] << " ";
         }
     }
+    /* To be implemented...
+    void load(const std::string& filename) const {
+        std::ifstream ifs(filename);
+        if (!ifs) throw std::runtime_error("Cannot open file for loading.");
+        std::string line;
+        for (size_t i = 0; i < conv_layers.size(); i++) {
+            std::getline(ifs, line);
+
+        }
+    } */
 
   private:
     static int calculate_fc_input_size(int rows, int cols, int num_conv_layers) {
         int reduced_rows = rows;
         int reduced_cols = cols;
         for (int i = 0; i < num_conv_layers; i++) {
-            reduced_rows = (reduced_rows - 2) / 2 + 1;
-            reduced_cols = (reduced_cols - 2) / 2 + 1;
+            reduced_rows = reduced_rows / 2;
+            reduced_cols = reduced_cols / 2;
         }
         return reduced_rows * reduced_cols;
     }
