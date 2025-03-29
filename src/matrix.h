@@ -114,6 +114,31 @@ class Matrix {
         return normalized;
     }
 
+    Matrix correlate(const Matrix& kernel, bool flip_kernel = false) const {
+        if (rows < kernel.rows || cols < kernel.cols) {
+            throw std::invalid_argument("Input matrix must be larger than or equal to kernel size");
+        }
+
+        int out_rows = rows - kernel.rows + 1;
+        int out_cols = cols - kernel.cols + 1;
+        Matrix result(out_rows, out_cols);
+
+        Matrix _kernel = flip_kernel ? kernel.flip() : kernel;
+        
+        for (int i = 0; i < out_rows; i++) {
+            for (int j = 0; j < out_cols; j++) {
+                double sum = 0.0;
+                for (int ki = 0; ki < _kernel.rows; ki++) {
+                    for (int kj = 0; kj < _kernel.cols; kj++) {
+                        sum += data[i + ki][j + kj] * _kernel.data[ki][kj];
+                    }
+                }
+                result.data[i][j] = sum;
+            }
+        }
+        return result;
+    }
+
     Matrix operator+(const Matrix& other) const {
         if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
         Matrix result(rows, cols);
@@ -125,12 +150,32 @@ class Matrix {
         return result;
     }
 
+    Matrix operator+(const double scalar) const {  // Addition with Broadcasting
+        Matrix result(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result.data[i][j] = data[i][j] + scalar;
+            }
+        }
+        return result;
+    }
+
     Matrix operator-(const Matrix& other) const {
         if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
         Matrix result(rows, cols);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 result.data[i][j] = data[i][j] - other.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    Matrix operator-(const double scalar) const {  // Subtraction with Broadcasting
+        Matrix result(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result.data[i][j] = data[i][j] - scalar;
             }
         }
         return result;
