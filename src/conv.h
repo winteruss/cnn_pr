@@ -1,13 +1,20 @@
 #ifndef CONV_H
 #define CONV_H
 
+#include <memory>
+
+#include "optimizer.h"
+
 class ConvLayer {
   public:
     Matrix kernel, grad_kernel;
     double bias, grad_bias;
     Matrix input;   // Save for backpropagation
+    std::unique_ptr<Optimizer> kernel_optimizer;
+    std::unique_ptr<Optimizer> bias_optimizer;
 
-    ConvLayer() : kernel(3, 3), grad_kernel(3, 3), bias(rand() / (double)RAND_MAX), grad_bias(0.0) {
+    ConvLayer(std::unique_ptr<Optimizer> opt) : kernel(3, 3), grad_kernel(3, 3), bias(rand() / (double)RAND_MAX), grad_bias(0.0),
+      kernel_optimizer(std::move(opt -> clone())), bias_optimizer(std::move(opt -> clone())) {
         kernel.randomize();
     }
 
@@ -37,9 +44,9 @@ class ConvLayer {
         return grad_input;
     }
 
-    void update(double lr) {
-        kernel = kernel - grad_kernel * lr;
-        bias -= lr * grad_bias;
+    void update() {
+        kernel_optimizer -> update(kernel, grad_kernel);
+        bias_optimizer -> update(bias, grad_bias);
     }
 };
 

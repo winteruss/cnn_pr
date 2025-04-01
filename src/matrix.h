@@ -12,7 +12,7 @@ class Matrix {
     std::vector<std::vector<double>> data;
     int rows, cols;
 
-    Matrix() {}
+    Matrix() : rows(0), cols(0) {}
     
     Matrix(int r, int c) : rows(r), cols(c), data(r, std::vector<double>(c, 0)) {}
     

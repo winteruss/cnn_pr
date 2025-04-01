@@ -1,8 +1,13 @@
 # Todo
-- [x] Backward Propagation for single image
-- [x] Dataset Class
-- [x] loadCSV()
-- [x] train() for multiple images
-- [ ] model.load()
-- [ ] train-testing
+
+@saeol0415
+- [x] SGD
+- [x] Momentum 
+- [ ] AdaGrad
+- [ ] RMSProp
+- [ ] Adam
+
+
+@winteruss
 - [ ] He initialization
+- [ ] Pre-processing Data for Optimization

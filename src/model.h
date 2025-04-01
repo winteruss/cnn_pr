@@ -3,12 +3,14 @@
 
 #include <vector>
 #include <fstream>
+#include <memory>
 
 #include "conv.h"
 #include "pool.h"
 #include "fc.h"
 #include "activation.h"
 #include "loss.h"
+#include "optimizer.h"
 
 class Model {
   public:
@@ -22,16 +24,13 @@ class Model {
 
     std::vector<Matrix> intermediates;   // Save for backpropagation
 
-    Model(int input_rows, int input_cols, int output_size, double lr, int num_conv_layers)
+    Model(int input_rows, int input_cols, int output_size, double lr, int num_conv_layers, std::unique_ptr<Optimizer> opt)
     // Adjust input size of FC layer regarding pooling layers, assuming 2x2 and stride 2
-    : fc(calculate_fc_input_size(input_rows, input_cols, num_conv_layers), output_size, lr), output_size(output_size), learning_rate(lr) {
-        int rows = input_rows;
-        int cols = input_cols;
+    : fc(calculate_fc_input_size(input_rows, input_cols, num_conv_layers), output_size, opt -> clone()), output_size(output_size), learning_rate(lr) {
+        conv_layers.reserve(num_conv_layers);
         for (int i = 0; i < num_conv_layers; i++) {
-            conv_layers.emplace_back();
+            conv_layers.emplace_back(opt -> clone());
             pool_layers.emplace_back();
-            rows = (rows - 2) / 2 + 1;
-            cols = (cols - 2) / 2 + 1;
         }
         intermediates.resize(2 * num_conv_layers + 1);  // Conv, ReLu Outputs + FC Input
     }
@@ -71,8 +70,8 @@ class Model {
     }
 
     void update() {
-        for (auto& conv : conv_layers) conv.update(learning_rate);
-        fc.update(learning_rate);
+        for (auto& conv : conv_layers) conv.update();
+        fc.update();
     }
 
     void save(const std::string& filename) const {
