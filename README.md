@@ -4,8 +4,8 @@
 - [x] SGD
 - [x] Momentum 
 - [x] AdaGrad
-- [ ] RMSProp
-- [ ] Adam
+- [x] RMSProp
+- [x] Adam
 
 
 @winteruss

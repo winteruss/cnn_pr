@@ -231,6 +231,16 @@ class Matrix {
         return result;
     }
 
+    Matrix operator/(double scalar) const {
+        Matrix result(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result.data[i][j] = this->data[i][j] / scalar;
+            }
+        }
+        return result;
+    }
+
     Matrix operator/(const Matrix& other) const {   // Hadamard Division
         if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
         Matrix result(rows, cols);
@@ -293,6 +303,15 @@ class Matrix {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 this->data[i][j] *= scalar;
+            }
+        }
+        return *this;
+    }
+
+    Matrix& operator/=(double scalar) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                this->data[i][j] /= scalar;
             }
         }
         return *this;
