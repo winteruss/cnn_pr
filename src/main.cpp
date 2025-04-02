@@ -8,7 +8,7 @@
 
 int main() {
     Dataset train_data, test_data;
-    train_data.loadCSV("C:\\Users\\saeol\\Desktop\\C Projects\\CNN\\data\\mnist_test.csv", 28, 28, 10);
+    train_data.loadCSV("C:\\Users\\saeol\\Desktop\\C Projects\\CNN\\data\\mnist_train_1k.csv", 28, 28, 10);
     test_data.loadCSV("C:\\Users\\saeol\\Desktop\\C Projects\\CNN\\data\\mnist_test.csv", 28, 28, 10);
 
     int num_conv_layers = 2;
