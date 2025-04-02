@@ -14,12 +14,13 @@ int main() {
     int num_conv_layers = 2;
     int fc_input_size = Model::calculate_fc_input_size(28, 28, num_conv_layers);
     int epochs = 100;
-    double lr = 0.001;
+    double lr = 0.01;
 
     auto sgd = std::make_unique<SGD>(lr);
     auto momentum = std::make_unique<Momentum>(lr, 0.9);
+    auto adagrad = std::make_unique<AdaGrad>(lr);
 
-    Model model(28, 28, 10, lr, num_conv_layers, std::move(momentum));
+    Model model(28, 28, 10, lr, num_conv_layers, std::move(adagrad));
 
     for (int i = 0; i < num_conv_layers; i++) {
         model.conv_layers[i].kernel = Matrix(3, 3);

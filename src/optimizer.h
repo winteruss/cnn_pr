@@ -1,6 +1,9 @@
 #ifndef OPTIMIZER_H
 #define OPTIMIZER_H
 
+#define EPSILON 1e-8
+
+#include <cmath>
 #include <memory>
 
 class Optimizer {
@@ -57,6 +60,27 @@ class Momentum : public Optimizer {
 };
 
 class AdaGrad : public Optimizer {
+  private:
+    Matrix G_matrix;
+    double G_scalar;
+  
+  public:
+    AdaGrad(double lr = 0.01) : Optimizer(lr), G_scalar(0.0) {}
+    
+    void update(Matrix& param, const Matrix& grad) override {
+        if (G_matrix.rows == 0) G_matrix = Matrix(param.rows, param.cols);
+        G_matrix += grad.hadamard_power(2);
+        param -= (learning_rate / (G_matrix.hadamard_power(0.5) + EPSILON)) % grad;
+    }
+
+    void update(double& param, double grad) override {
+        G_scalar += grad * grad;
+        param -= (learning_rate / (std::sqrt(G_scalar) + EPSILON)) * grad;
+    }
+
+    std::unique_ptr<Optimizer> clone() const override {
+      return std::make_unique<AdaGrad>(learning_rate);
+    }
 };
 
 class RMSProp : public Optimizer {

@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 #include <algorithm>
 
 class Matrix {
@@ -139,6 +140,16 @@ class Matrix {
         return result;
     }
 
+    Matrix hadamard_power(double power) const {
+        Matrix result(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result.data[i][j] = std::pow(data[i][j], power);
+            }
+        }
+        return result;
+    }
+
     Matrix operator+(const Matrix& other) const {
         if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
         Matrix result(rows, cols);
@@ -209,6 +220,40 @@ class Matrix {
         return mat * scalar;
     }
 
+    Matrix operator%(const Matrix& other) const {   // Hadamard Multiplication
+        if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
+        Matrix result(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result.data[i][j] = data[i][j] * other.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    Matrix operator/(const Matrix& other) const {   // Hadamard Division
+        if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
+        Matrix result(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (other.data[i][j] == 0) throw std::invalid_argument("Division by zero.");
+                result.data[i][j] = data[i][j] / other.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    friend Matrix operator/(double scalar, const Matrix& other) {   // Hadamard Division
+        Matrix result(other.rows, other.cols);
+        for (int i = 0; i < other.rows; i++) {
+            for (int j = 0; j < other.cols; j++) {
+                if (other.data[i][j] == 0) throw std::invalid_argument("Division by zero.");
+                result.data[i][j] = scalar / other.data[i][j];
+            }
+        }
+        return result;
+    }
+
     Matrix& operator+=(const Matrix& other) {
         if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
         for (int i = 0; i < rows; i++) {
@@ -236,7 +281,7 @@ class Matrix {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < other.cols; j++) {
                 for (int k = 0; k < cols; k++) {
-                    result.data[i][j] += data[i][k] * other.data[k][j];
+                    result.data[i][j] = data[i][k] * other.data[k][j];
                 }
             }
         }
@@ -248,6 +293,29 @@ class Matrix {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 this->data[i][j] *= scalar;
+            }
+        }
+        return *this;
+    }
+
+    Matrix& operator%=(const Matrix& other) {   // Hadamard Multiplication
+        if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                data[i][j] *= other.data[i][j];
+            }
+        }
+        return *this;
+    }
+
+    Matrix& operator/=(const Matrix& other) {   // Hadamard Division
+        if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix size mismatch.");
+        
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (other.data[i][j] == 0) throw std::invalid_argument("Division by zero.");
+                data[i][j] /= other.data[i][j];
             }
         }
         return *this;

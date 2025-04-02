@@ -3,7 +3,7 @@
 @saeol0415
 - [x] SGD
 - [x] Momentum 
-- [ ] AdaGrad
+- [x] AdaGrad
 - [ ] RMSProp
 - [ ] Adam
 
