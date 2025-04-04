@@ -142,7 +142,7 @@ class Model {
             reduced_rows = (reduced_rows) / 2; 
             reduced_cols = (reduced_cols) / 2;
         }
-        return reduced_rows * reduced_cols * 64;
+        return reduced_rows * reduced_cols;
     }
     
     /* To be implemented...

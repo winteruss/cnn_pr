@@ -10,7 +10,7 @@
 int main() {
     Dataset train_data, test_data;
 
-    train_data.loadCSV("/Users/Gene/Desktop/folder_c/c++/CNN_pr/CNN/data/mnist_train_1k.csv", 28, 28, 10);
+    train_data.loadCSV("/Users/Gene/Desktop/folder_c/c++/CNN_pr/CNN/data/mnist_train_10k.csv", 28, 28, 10);
     test_data.loadCSV("/Users/Gene/Desktop/folder_c/c++/CNN_pr/CNN/data/mnist_test.csv", 28, 28, 10);
 
     int norm_type = 0; // 0: Min-Max, 1: Z-Score
@@ -22,8 +22,8 @@ int main() {
 
     int num_conv_layers = 2;
     int fc_input_size = Model::calculate_fc_input_size(28, 28, num_conv_layers);
-    int epochs = 1000;
-    double lr = 0.01;
+    int epochs = 100;
+    double lr = 0.001;
 
     auto sgd = std::make_unique<SGD>(lr);
     auto momentum = std::make_unique<Momentum>(lr, 0.9);
@@ -36,10 +36,13 @@ int main() {
 
     Model model(28, 28, 10, lr, num_conv_layers, std::move(adam), batch_norm_flag);
 
+    std::cout << "Initializing convolutional layers..." << std::endl;
     for (int i = 0; i < num_conv_layers; i++) {
+        std::cout << "Conv Layer " << i << ": fan_in = " << (3 * 3 * (i > 0 ? 32 : 1)) << std::endl;
         model.conv_layers[i].init_type = init_type;
         model.conv_layers[i].initialize(3 * 3 * (i > 0 ? 32 : 1)); //calculate fan_in
     }
+    std::cout << "Fully Connected Layer: input size = " << fc_input_size << std::endl;
 
    model.fc.init_type = init_type;
    model.fc.initialize(fc_input_size);
